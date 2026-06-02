@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
@@ -13,6 +13,7 @@ import {
   Mail,
   Menu,
   PieChart,
+  Play,
   Sparkles,
   X,
   Zap,
@@ -153,6 +154,16 @@ const sectionMotion = {
 
 const App = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [videoOpen, setVideoOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = videoOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [videoOpen]);
+
+  const closeVideo = () => setVideoOpen(false);
 
   return (
     <main className="site-shell">
@@ -207,6 +218,9 @@ const App = () => {
             <a className="btn btn-secondary" href={resumeLink} target="_blank" rel="noreferrer">
               Resume <ExternalLink size={18} />
             </a>
+            <button className="btn btn-secondary" type="button" onClick={() => setVideoOpen(true)}>
+              <Play size={18} fill="currentColor" /> Introduction Video
+            </button>
           </div>
         </motion.div>
 
@@ -408,9 +422,24 @@ const App = () => {
             <a className="btn btn-secondary" href={resumeLink} target="_blank" rel="noreferrer">
               <ExternalLink size={18} /> Resume
             </a>
+            <button className="btn btn-secondary" type="button" onClick={() => setVideoOpen(true)}>
+              <Play size={18} fill="currentColor" /> Introduction Video
+            </button>
           </div>
         </motion.div>
       </section>
+
+      {videoOpen && (
+        <div className="video-modal" role="dialog" aria-modal="true" aria-label="Introduction video">
+          <button className="video-backdrop" type="button" aria-label="Close video" onClick={closeVideo} />
+          <div className="video-panel">
+            <button className="video-close" type="button" aria-label="Close video" onClick={closeVideo}>
+              <X size={22} />
+            </button>
+            <video src={asset('videos/intro.mp4')} controls autoPlay playsInline preload="metadata" />
+          </div>
+        </div>
+      )}
     </main>
   );
 };
