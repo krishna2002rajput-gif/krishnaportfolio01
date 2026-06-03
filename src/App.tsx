@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { type CSSProperties, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
@@ -10,17 +10,60 @@ import {
   Github,
   Linkedin,
   LineChart,
+  LockKeyhole,
+  Loader2,
   Mail,
   Menu,
   PieChart,
   Play,
+  ShieldCheck,
   Sparkles,
+  UserCheck,
   X,
   Zap,
 } from 'lucide-react';
 
 const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
-const resumeLink = 'https://drive.google.com/file/d/1iXof1InYkwZvZ-jGlnTuhRf4gbLMjUkv/view?usp=sharing';
+
+declare global {
+  interface Window {
+    google?: {
+      accounts?: {
+        id?: {
+          initialize: (options: { client_id: string; callback: (response: { credential?: string }) => void }) => void;
+          renderButton: (element: HTMLElement, options: Record<string, string | boolean | number>) => void;
+        };
+      };
+    };
+  }
+}
+
+type AuthState = 'locked' | 'verifying' | 'revealing' | 'unlocked';
+
+type AuthUser = {
+  name: string;
+  email: string;
+  picture?: string;
+  method: 'google' | 'otp';
+  token?: string;
+};
+
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
+
+const apiPost = async <T,>(url: string, body: unknown): Promise<T> => {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const payload = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(payload.message || 'Secure service is unavailable. Configure Vercel environment variables first.');
+  }
+
+  return payload as T;
+};
 
 const navItems = [
   { label: 'Profile', href: '#profile' },
@@ -152,9 +195,145 @@ const sectionMotion = {
   transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
 } as const;
 
+const authSteps = ['Authenticating...', 'Verifying Identity...', 'Loading Portfolio...', 'Preparing Dashboard...'];
+
+const AuthPortal = ({
+  authState,
+  email,
+  otp,
+  error,
+  statusStep,
+  googleReady,
+  onEmailChange,
+  onOtpChange,
+  onRequestOtp,
+  onVerifyOtp,
+}: {
+  authState: AuthState;
+  email: string;
+  otp: string;
+  error: string;
+  statusStep: number;
+  googleReady: boolean;
+  onEmailChange: (value: string) => void;
+  onOtpChange: (value: string) => void;
+  onRequestOtp: () => void;
+  onVerifyOtp: () => void;
+}) => {
+  const isWorking = authState === 'verifying' || authState === 'revealing';
+
+  return (
+    <section className={`auth-portal ${authState !== 'locked' ? 'is-clearing' : ''}`} aria-label="Executive portfolio access">
+      <div className="security-grid" />
+      <div className="particle-field" aria-hidden="true">
+        {Array.from({ length: 18 }).map((_, index) => (
+          <span key={index} style={{ '--i': index } as CSSProperties} />
+        ))}
+      </div>
+
+      <motion.div
+        className="access-card glass-card"
+        initial={{ opacity: 0, y: 28, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div className="access-emblem">
+          <LockKeyhole size={28} />
+        </div>
+        <span>Private Access Gateway</span>
+        <h1>Executive Portfolio Access</h1>
+        <p>Secure access required to continue.</p>
+
+        <div className="google-access" id="google-access-button">
+          {!googleReady && (
+            <button className="btn btn-primary" type="button" disabled>
+              <ShieldCheck size={18} /> Continue with Google
+            </button>
+          )}
+        </div>
+
+        <div className="access-divider">
+          <span>Email OTP fallback</span>
+        </div>
+
+        <label className="auth-field">
+          <span>Email Address</span>
+          <input
+            type="email"
+            value={email}
+            placeholder="name@company.com"
+            autoComplete="email"
+            disabled={isWorking}
+            onChange={(event) => onEmailChange(event.target.value)}
+          />
+        </label>
+
+        <div className="otp-row">
+          <button className="btn btn-secondary" type="button" disabled={isWorking || !email} onClick={onRequestOtp}>
+            Request OTP
+          </button>
+          <label className="auth-field otp-field">
+            <span>Verification Code</span>
+            <input
+              type="text"
+              value={otp}
+              placeholder="KR7XQ8"
+              maxLength={6}
+              autoComplete="one-time-code"
+              disabled={isWorking}
+              onChange={(event) => onOtpChange(event.target.value.toUpperCase())}
+            />
+          </label>
+        </div>
+
+        <button className="btn btn-primary access-submit" type="button" disabled={isWorking || !email || otp.length < 6} onClick={onVerifyOtp}>
+          {isWorking ? <Loader2 className="spin" size={18} /> : <UserCheck size={18} />}
+          Continue
+        </button>
+
+        {error && <p className="auth-error">{error}</p>}
+
+        {isWorking && (
+          <div className="auth-progress" aria-live="polite">
+            <div className="progress-track">
+              <span style={{ width: `${Math.min((statusStep + 1) * 25, 100)}%` }} />
+            </div>
+            <strong>{authState === 'revealing' ? 'Identity Verified' : authSteps[statusStep]}</strong>
+            <small>{authState === 'revealing' ? 'Loading Executive Portfolio' : 'Encrypted access checks in progress'}</small>
+          </div>
+        )}
+      </motion.div>
+    </section>
+  );
+};
+
+const SecurityShutter = ({ active }: { active: boolean }) => (
+  <div className={`security-shutter ${active ? 'is-opening' : ''}`} aria-hidden="true">
+    <div className="shutter-light" />
+    <div className="shutter-panel">
+      {Array.from({ length: 10 }).map((_, index) => (
+        <span key={index} />
+      ))}
+    </div>
+  </div>
+);
+
 const App = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [videoOpen, setVideoOpen] = useState(false);
+  const [videoUrl, setVideoUrl] = useState('');
+  const [authState, setAuthState] = useState<AuthState>(() => {
+    return sessionStorage.getItem('portfolio-access-token') ? 'unlocked' : 'locked';
+  });
+  const [authUser, setAuthUser] = useState<AuthUser | null>(() => {
+    const stored = sessionStorage.getItem('portfolio-access-user');
+    return stored ? (JSON.parse(stored) as AuthUser) : null;
+  });
+  const [authEmail, setAuthEmail] = useState('');
+  const [authOtp, setAuthOtp] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [statusStep, setStatusStep] = useState(0);
+  const [googleReady, setGoogleReady] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = videoOpen ? 'hidden' : '';
@@ -163,10 +342,182 @@ const App = () => {
     };
   }, [videoOpen]);
 
-  const closeVideo = () => setVideoOpen(false);
+  useEffect(() => {
+    document.body.classList.toggle('protected-content', authState === 'unlocked');
+    return () => document.body.classList.remove('protected-content');
+  }, [authState]);
+
+  useEffect(() => {
+    if (authState !== 'locked' || !googleClientId) return;
+
+    const initializeGoogle = () => {
+      if (!window.google?.accounts?.id) return;
+
+      window.google.accounts.id.initialize({
+        client_id: googleClientId,
+        callback: async ({ credential }) => {
+          if (!credential) return;
+          try {
+            setAuthError('');
+            setAuthState('verifying');
+            const payload = await apiPost<{ user: AuthUser }>('/api/auth/google', { credential });
+            completeAuthentication(payload.user);
+          } catch (error) {
+            setAuthState('locked');
+            setAuthError(error instanceof Error ? error.message : 'Google verification failed.');
+          }
+        },
+      });
+
+      const button = document.getElementById('google-access-button');
+      if (button) {
+        button.innerHTML = '';
+        window.google.accounts.id.renderButton(button, {
+          theme: 'filled_black',
+          size: 'large',
+          shape: 'pill',
+          text: 'continue_with',
+          width: 300,
+        });
+        setGoogleReady(true);
+      }
+    };
+
+    if (window.google?.accounts?.id) {
+      initializeGoogle();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.onload = initializeGoogle;
+    document.head.appendChild(script);
+  }, [authState]);
+
+  useEffect(() => {
+    const block = (event: Event) => {
+      if (authState === 'unlocked') {
+        event.preventDefault();
+        setAuthError('Content Protected');
+      }
+    };
+
+    document.addEventListener('contextmenu', block);
+    document.addEventListener('copy', block);
+    document.addEventListener('cut', block);
+    document.addEventListener('dragstart', block);
+
+    return () => {
+      document.removeEventListener('contextmenu', block);
+      document.removeEventListener('copy', block);
+      document.removeEventListener('cut', block);
+      document.removeEventListener('dragstart', block);
+    };
+  }, [authState]);
+
+  useEffect(() => {
+    if (authState !== 'verifying') return;
+
+    const interval = window.setInterval(() => {
+      setStatusStep((step) => Math.min(step + 1, authSteps.length - 1));
+    }, 650);
+
+    return () => window.clearInterval(interval);
+  }, [authState]);
+
+  const completeAuthentication = (user: AuthUser) => {
+    setAuthUser(user);
+    setAuthEmail('');
+    setAuthOtp('');
+    setStatusStep(0);
+    sessionStorage.setItem('portfolio-access-token', user.token || 'client-session');
+    sessionStorage.setItem('portfolio-access-user', JSON.stringify(user));
+
+    window.setTimeout(() => setAuthState('revealing'), 2100);
+    window.setTimeout(() => setAuthState('unlocked'), 4700);
+  };
+
+  const requestOtp = async () => {
+    try {
+      setAuthError('');
+      await apiPost('/api/auth/request-otp', { email: authEmail });
+      setAuthError('OTP sent. It expires in 5 minutes.');
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'OTP request failed.');
+    }
+  };
+
+  const verifyOtp = async () => {
+    try {
+      setAuthError('');
+      setAuthState('verifying');
+      const payload = await apiPost<{ user: AuthUser }>('/api/auth/verify-otp', { email: authEmail, otp: authOtp });
+      completeAuthentication(payload.user);
+    } catch (error) {
+      setAuthState('locked');
+      setAuthError(error instanceof Error ? error.message : 'OTP verification failed.');
+    }
+  };
+
+  const getProtectedAsset = async (assetName: 'resume' | 'intro') => {
+    const token = sessionStorage.getItem('portfolio-access-token');
+    const response = await fetch(`/api/assets/signed-url?asset=${assetName}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(payload.message || 'Protected asset service is not configured yet.');
+    }
+
+    return payload.url as string;
+  };
+
+  const openResume = async () => {
+    try {
+      const url = await getProtectedAsset('resume');
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'Unable to open protected resume.');
+    }
+  };
+
+  const openIntroVideo = async () => {
+    try {
+      const url = await getProtectedAsset('intro');
+      setVideoUrl(url);
+      setVideoOpen(true);
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'Unable to open protected video.');
+    }
+  };
+
+  const closeVideo = () => {
+    setVideoOpen(false);
+    setVideoUrl('');
+  };
 
   return (
     <main className="site-shell">
+      {authState !== 'unlocked' && (
+        <AuthPortal
+          authState={authState}
+          email={authEmail}
+          otp={authOtp}
+          error={authError}
+          statusStep={statusStep}
+          googleReady={googleReady}
+          onEmailChange={setAuthEmail}
+          onOtpChange={setAuthOtp}
+          onRequestOtp={requestOtp}
+          onVerifyOtp={verifyOtp}
+        />
+      )}
+      <SecurityShutter active={authState === 'revealing'} />
+
+      <div className={`portfolio-content ${authState === 'locked' || authState === 'verifying' ? 'is-locked' : ''}`}>
       <nav className="nav-shell" aria-label="Primary navigation">
         <a href="#hero" className="brand-mark" aria-label="Krishna Rajput home">
           KR
@@ -187,6 +538,12 @@ const App = () => {
             </a>
           ))}
         </div>
+        {authUser && (
+          <div className="user-chip" aria-label={`Verified user ${authUser.email}`}>
+            {authUser.picture ? <img src={authUser.picture} alt="" /> : <ShieldCheck size={16} />}
+            <span>{authUser.name || authUser.email}</span>
+          </div>
+        )}
       </nav>
 
       <section id="hero" className="hero-section">
@@ -215,10 +572,10 @@ const App = () => {
             <a className="btn btn-primary" href="#skills">
               View Skills <ArrowRight size={18} />
             </a>
-            <a className="btn btn-secondary" href={resumeLink} target="_blank" rel="noreferrer">
+            <button className="btn btn-secondary" type="button" onClick={openResume}>
               Resume <ExternalLink size={18} />
-            </a>
-            <button className="btn btn-secondary" type="button" onClick={() => setVideoOpen(true)}>
+            </button>
+            <button className="btn btn-secondary" type="button" onClick={openIntroVideo}>
               <Play size={18} fill="currentColor" /> Introduction Video
             </button>
           </div>
@@ -419,10 +776,10 @@ const App = () => {
             <a className="btn btn-secondary" href="https://www.linkedin.com/in/krishna-rajput-b30a0025b/" target="_blank" rel="noreferrer">
               <Linkedin size={18} /> LinkedIn
             </a>
-            <a className="btn btn-secondary" href={resumeLink} target="_blank" rel="noreferrer">
+            <button className="btn btn-secondary" type="button" onClick={openResume}>
               <ExternalLink size={18} /> Resume
-            </a>
-            <button className="btn btn-secondary" type="button" onClick={() => setVideoOpen(true)}>
+            </button>
+            <button className="btn btn-secondary" type="button" onClick={openIntroVideo}>
               <Play size={18} fill="currentColor" /> Introduction Video
             </button>
           </div>
@@ -436,10 +793,11 @@ const App = () => {
             <button className="video-close" type="button" aria-label="Close video" onClick={closeVideo}>
               <X size={22} />
             </button>
-            <video src={asset('videos/intro.mp4')} controls autoPlay playsInline preload="metadata" />
+            <video src={videoUrl} controls autoPlay playsInline preload="metadata" />
           </div>
         </div>
       )}
+      </div>
     </main>
   );
 };
