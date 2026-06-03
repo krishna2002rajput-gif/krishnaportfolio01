@@ -68,10 +68,48 @@ img {
   z-index: 1;
 }
 
+.portfolio-content.inspection-warning .section,
+.portfolio-content.inspection-warning .hero-content,
+.portfolio-content.inspection-warning .hero-card {
+  filter: blur(4px);
+  transition: filter 0.25s ease;
+}
+
 .portfolio-content.is-locked {
   visibility: hidden;
   height: 100vh;
   overflow: hidden;
+}
+
+.security-toast {
+  position: fixed;
+  top: 94px;
+  right: 22px;
+  z-index: 120;
+  max-width: min(360px, calc(100% - 44px));
+  border: 1px solid rgba(248, 198, 111, 0.34);
+  border-radius: 14px;
+  background: rgba(8, 9, 13, 0.82);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.34);
+  color: var(--warm);
+  padding: 14px 16px;
+  font-weight: 900;
+  backdrop-filter: blur(18px);
+}
+
+.portfolio-watermark {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  color: rgba(255, 255, 255, 0.035);
+  font-size: clamp(3rem, 12vw, 12rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  transform: rotate(-18deg);
+  text-transform: uppercase;
 }
 
 .auth-portal {

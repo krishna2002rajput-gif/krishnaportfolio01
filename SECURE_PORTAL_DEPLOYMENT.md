@@ -6,6 +6,8 @@ This portfolio now includes a premium authentication gate and Vercel serverless 
 - Email OTP fallback with 6-character codes
 - Redis-backed OTP TTL, cooldown, rate limiting, failed-attempt lockout, and sessions
 - Google Sheets visitor logging
+- Audit logging for auth attempts, protected asset requests, and client protection events
+- Analytics summary scaffolding for future dashboard views
 - 60-second signed URLs for protected resume and intro video access
 - Security headers through `vercel.json`
 
@@ -28,6 +30,7 @@ Copy `.env.example` into Vercel project environment variables and fill in the va
 - `VITE_GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_SHEET_ID`
+- `GOOGLE_AUDIT_SHEET_RANGE`
 - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
 - `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`
 - `UPSTASH_REDIS_REST_URL`
@@ -45,6 +48,12 @@ Use these columns in the configured sheet:
 
 ```text
 Timestamp | Name | Email | Authentication Method | Country | Device | Browser | IP Address | Visit Count | Verification Status
+```
+
+Create an `Audit` sheet with these columns:
+
+```text
+Timestamp | Event | Email | Status | IP Address | User Agent | Details
 ```
 
 ## Security Reality Check

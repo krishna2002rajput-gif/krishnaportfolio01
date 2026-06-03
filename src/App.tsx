@@ -65,6 +65,18 @@ const apiPost = async <T,>(url: string, body: unknown): Promise<T> => {
   return payload as T;
 };
 
+const logClientEvent = (event: string, status: string, details = '') => {
+  const token = sessionStorage.getItem('portfolio-access-token');
+  fetch('/api/audit/event', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ event, status, details }),
+  }).catch(() => undefined);
+};
+
 const navItems = [
   { label: 'Profile', href: '#profile' },
   { label: 'Skills', href: '#skills' },
@@ -332,6 +344,8 @@ const App = () => {
   const [authEmail, setAuthEmail] = useState('');
   const [authOtp, setAuthOtp] = useState('');
   const [authError, setAuthError] = useState('');
+  const [securityNotice, setSecurityNotice] = useState('');
+  const [inspectionDetected, setInspectionDetected] = useState(false);
   const [statusStep, setStatusStep] = useState(0);
   const [googleReady, setGoogleReady] = useState(false);
 
@@ -400,7 +414,8 @@ const App = () => {
     const block = (event: Event) => {
       if (authState === 'unlocked') {
         event.preventDefault();
-        setAuthError('Content Protected');
+        setSecurityNotice('Content Protected');
+        logClientEvent('Content Protection', 'Blocked Interaction', event.type);
       }
     };
 
@@ -416,6 +431,36 @@ const App = () => {
       document.removeEventListener('dragstart', block);
     };
   }, [authState]);
+
+  useEffect(() => {
+    if (authState !== 'unlocked') return;
+
+    const detectDevtools = () => {
+      const threshold = 170;
+      const widthGap = window.outerWidth - window.innerWidth > threshold;
+      const heightGap = window.outerHeight - window.innerHeight > threshold;
+
+      if ((widthGap || heightGap) && !inspectionDetected) {
+        setInspectionDetected(true);
+        setSecurityNotice('Protected Portfolio Environment Detected');
+        logClientEvent('DevTools Detection', 'Warning', widthGap ? 'Width threshold' : 'Height threshold');
+      }
+    };
+
+    const interval = window.setInterval(detectDevtools, 1200);
+    window.addEventListener('resize', detectDevtools);
+
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('resize', detectDevtools);
+    };
+  }, [authState, inspectionDetected]);
+
+  useEffect(() => {
+    if (!securityNotice) return;
+    const timer = window.setTimeout(() => setSecurityNotice(''), 3600);
+    return () => window.clearTimeout(timer);
+  }, [securityNotice]);
 
   useEffect(() => {
     if (authState !== 'verifying') return;
@@ -517,7 +562,9 @@ const App = () => {
       )}
       <SecurityShutter active={authState === 'revealing'} />
 
-      <div className={`portfolio-content ${authState === 'locked' || authState === 'verifying' ? 'is-locked' : ''}`}>
+      <div className={`portfolio-content ${authState === 'locked' || authState === 'verifying' ? 'is-locked' : ''} ${inspectionDetected ? 'inspection-warning' : ''}`}>
+      {securityNotice && <div className="security-toast">{securityNotice}</div>}
+      <div className="portfolio-watermark" aria-hidden="true">KRISHNA RAJPUT</div>
       <nav className="nav-shell" aria-label="Primary navigation">
         <a href="#hero" className="brand-mark" aria-label="Krishna Rajput home">
           KR

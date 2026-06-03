@@ -92,3 +92,33 @@ export const appendVisitorLog = async ({ request, user, method, status = 'Verifi
     throw new Error('Google Sheets append failed');
   }
 };
+
+export const appendAuditLog = async ({ request, event, email = '', status = '', details = '' }) => {
+  const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+  if (!spreadsheetId) return;
+
+  const token = await getAccessToken();
+  if (!token) return;
+
+  const ip =
+    request.headers['x-forwarded-for']?.split(',')[0] ||
+    request.headers['x-real-ip'] ||
+    'unknown';
+  const userAgent = request.headers['user-agent'] || '';
+  const values = [[new Date().toISOString(), event, email, status, ip, userAgent, details]];
+  const range = encodeURIComponent(process.env.GOOGLE_AUDIT_SHEET_RANGE || 'Audit!A:G');
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?valueInputOption=USER_ENTERED`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ values }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Google Sheets audit append failed');
+  }
+};

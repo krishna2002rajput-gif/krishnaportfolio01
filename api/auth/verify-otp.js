@@ -1,4 +1,4 @@
-import { appendVisitorLog } from '../_lib/sheets.js';
+import { appendAuditLog, appendVisitorLog } from '../_lib/sheets.js';
 import {
   cacheDelete,
   cacheGet,
@@ -17,12 +17,14 @@ export default async function handler(request, response) {
     const email = normalizeEmail(request.body?.email);
     const otp = String(request.body?.otp || '').trim().toUpperCase();
     if (!email || otp.length !== 6) {
+      await appendAuditLog({ request, event: 'OTP Verification', email, status: 'Invalid Payload' }).catch((error) => console.error(error.message));
       json(response, 400, { message: 'Email and 6-character OTP are required' });
       return;
     }
 
     const lockKey = `otp_lock:${email}`;
     if (await cacheGet(lockKey)) {
+      await appendAuditLog({ request, event: 'OTP Verification', email, status: 'Locked' }).catch((error) => console.error(error.message));
       json(response, 429, { message: 'Account locked for 15 minutes due to failed verification attempts.' });
       return;
     }
@@ -33,6 +35,13 @@ export default async function handler(request, response) {
       if (attempts >= 5) {
         await cacheSet(lockKey, '1', 60 * 15);
       }
+      await appendAuditLog({
+        request,
+        event: 'OTP Verification',
+        email,
+        status: attempts >= 5 ? 'Locked After Failures' : 'Failed',
+        details: `Attempts: ${attempts}`,
+      }).catch((error) => console.error(error.message));
       json(response, 401, { message: attempts >= 5 ? 'Account locked for 15 minutes.' : 'Invalid or expired OTP.' });
       return;
     }
@@ -46,7 +55,10 @@ export default async function handler(request, response) {
       method: 'otp',
     };
     const token = await createSession(user);
+    await cacheIncrement('analytics:otp_users', 60 * 60 * 24 * 30);
+    await cacheIncrement('analytics:total_visitors', 60 * 60 * 24 * 30);
     await appendVisitorLog({ request, user, method: 'Email OTP' }).catch((error) => console.error(error.message));
+    await appendAuditLog({ request, event: 'OTP Verification', email, status: 'Success' }).catch((error) => console.error(error.message));
 
     json(response, 200, { user: { ...user, token } });
   } catch (error) {
