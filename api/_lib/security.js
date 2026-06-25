@@ -129,6 +129,27 @@ export const sendOtpEmail = async (email, otp) => {
     return;
   }
 
+  const from = process.env.OTP_FROM_EMAIL || 'Krishna Portfolio <onboarding@resend.dev>';
+  const subject = 'Your Krishna Rajput Portfolio access code';
+  const text = [
+    'Krishna Rajput Portfolio',
+    '',
+    `Your secure access code is: ${otp}`,
+    '',
+    'This code expires in 5 minutes. If you did not request access, you can safely ignore this email.',
+  ].join('\n');
+  const html = `
+    <div style="margin:0;padding:24px;background:#f6f8fb;font-family:Arial,sans-serif;color:#0f172a">
+      <div style="max-width:520px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:28px">
+        <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#2563eb">Secure portfolio access</p>
+        <h1 style="margin:0 0 18px;font-size:24px;line-height:1.2;color:#0f172a">Krishna Rajput Portfolio</h1>
+        <p style="margin:0 0 18px;font-size:15px;line-height:1.6;color:#334155">Use the verification code below to continue to the executive portfolio portal.</p>
+        <div style="margin:0 0 18px;padding:18px 20px;border-radius:12px;background:#0f172a;color:#ffffff;font-size:28px;font-weight:800;letter-spacing:.18em;text-align:center">${otp}</div>
+        <p style="margin:0;font-size:13px;line-height:1.6;color:#64748b">This code expires in 5 minutes. If you did not request access, you can safely ignore this email.</p>
+      </div>
+    </div>
+  `;
+
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
@@ -136,10 +157,14 @@ export const sendOtpEmail = async (email, otp) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: process.env.OTP_FROM_EMAIL || 'Portfolio Access <onboarding@resend.dev>',
+      from,
       to: email,
-      subject: 'Krishna Rajput Portfolio Access Code',
-      text: `Your secure portfolio access code is ${otp}. It expires in 5 minutes.`,
+      subject,
+      text,
+      html,
+      headers: {
+        'X-Entity-Ref-ID': crypto.randomUUID(),
+      },
     }),
   });
 

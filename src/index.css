@@ -4,15 +4,15 @@
 
 :root {
   color-scheme: dark;
-  --bg: #08090d;
-  --panel: rgba(17, 22, 31, 0.72);
-  --panel-strong: rgba(20, 27, 39, 0.9);
-  --text: #eef6fb;
-  --muted: rgba(238, 246, 251, 0.7);
-  --line: rgba(238, 246, 251, 0.15);
-  --accent: #6ee7b7;
-  --accent-two: #60a5fa;
-  --warm: #f8c66f;
+  --bg: #040d21;
+  --panel: rgba(10, 25, 47, 0.65);
+  --panel-strong: rgba(10, 25, 47, 0.95);
+  --text: #e2f1ff;
+  --muted: rgba(226, 241, 255, 0.65);
+  --line: rgba(100, 255, 218, 0.15);
+  --accent: #64ffda;
+  --accent-two: #3b82f6;
+  --warm: #f43f5e;
 }
 
 *,
@@ -121,11 +121,11 @@ img {
   padding: 24px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 24% 18%, rgba(248, 198, 111, 0.2), transparent 25rem),
-    radial-gradient(circle at 78% 22%, rgba(96, 165, 250, 0.22), transparent 28rem),
-    linear-gradient(145deg, rgba(3, 7, 18, 0.98), rgba(7, 16, 24, 0.94));
-  backdrop-filter: blur(22px);
-  transition: opacity 0.9s ease, visibility 0.9s ease;
+    radial-gradient(circle at 24% 18%, rgba(244, 63, 94, 0.2), transparent 25rem),
+    radial-gradient(circle at 78% 22%, rgba(100, 255, 218, 0.15), transparent 28rem),
+    linear-gradient(145deg, rgba(2, 6, 23, 0.98), rgba(4, 13, 33, 0.94));
+  backdrop-filter: blur(12px);
+  transition: opacity 0.45s ease, visibility 0.45s ease;
 }
 
 .auth-portal.is-clearing {
@@ -137,13 +137,13 @@ img {
 .security-grid {
   position: absolute;
   inset: -40%;
-  opacity: 0.26;
+  opacity: 0.18;
   background-image:
     linear-gradient(rgba(110, 231, 183, 0.16) 1px, transparent 1px),
     linear-gradient(90deg, rgba(96, 165, 250, 0.13) 1px, transparent 1px);
-  background-size: 48px 48px;
+  background-size: 64px 64px;
   transform: perspective(900px) rotateX(62deg) translateY(8%);
-  animation: grid-scan 10s linear infinite;
+  animation: grid-scan 16s linear infinite;
 }
 
 .particle-field {
@@ -156,12 +156,12 @@ img {
   position: absolute;
   left: calc((var(--i) * 47px) % 100%);
   top: calc((var(--i) * 71px) % 100%);
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   background: rgba(248, 198, 111, 0.72);
-  box-shadow: 0 0 22px rgba(248, 198, 111, 0.78);
-  animation: particle-drift 5.5s ease-in-out infinite alternate;
+  box-shadow: 0 0 14px rgba(248, 198, 111, 0.56);
+  animation: particle-drift 8s ease-in-out infinite alternate;
   animation-delay: calc(var(--i) * -0.22s);
 }
 
@@ -184,7 +184,7 @@ img {
     linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent 36%),
     linear-gradient(90deg, transparent, rgba(110, 231, 183, 0.12), transparent);
   transform: translateX(-100%);
-  animation: light-sweep 3.6s ease-in-out infinite;
+  animation: light-sweep 5s ease-in-out infinite;
 }
 
 .access-emblem {
@@ -329,7 +329,7 @@ img {
   z-index: 210;
   pointer-events: none;
   transform: translateY(0);
-  transition: transform 2.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 1.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .security-shutter:not(.is-opening) {
@@ -393,8 +393,8 @@ img {
   width: 100%;
   overflow-x: clip;
   background:
-    radial-gradient(circle at 18% 16%, rgba(96, 165, 250, 0.18), transparent 30rem),
-    radial-gradient(circle at 84% 34%, rgba(110, 231, 183, 0.16), transparent 28rem),
+    radial-gradient(circle at 18% 16%, rgba(59, 130, 246, 0.18), transparent 30rem),
+    radial-gradient(circle at 84% 34%, rgba(100, 255, 218, 0.12), transparent 28rem),
     var(--bg);
 }
 
@@ -500,8 +500,8 @@ img {
   height: 32rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 38% 62% 52% 48%;
-  opacity: 0.3;
-  animation: drift 14s ease-in-out infinite alternate;
+  opacity: 0.22;
+  animation: drift 18s ease-in-out infinite alternate;
 }
 
 .hero-motion-one {
@@ -561,8 +561,7 @@ img {
 }
 
 .hero-actions,
-.contact-actions,
-.project-actions {
+.contact-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
@@ -969,7 +968,7 @@ img {
 
 .project-body {
   display: flex;
-  min-height: 390px;
+  min-height: 330px;
   flex-direction: column;
   padding: 24px;
 }
@@ -996,24 +995,6 @@ img {
   padding: 6px 10px;
   color: rgba(238, 246, 251, 0.78);
   font-size: 0.78rem;
-}
-
-.project-actions {
-  margin-top: 20px;
-}
-
-.project-actions a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  padding: 10px 14px;
-  transition: 0.25s ease;
-}
-
-.project-actions a:hover {
-  background: rgba(255, 255, 255, 0.09);
 }
 
 .certifications-section {
@@ -1248,13 +1229,11 @@ img {
   }
 
   .hero-actions,
-  .contact-actions,
-  .project-actions {
+  .contact-actions {
     flex-direction: column;
   }
 
-  .btn,
-  .project-actions a {
+  .btn {
     width: 100%;
   }
 

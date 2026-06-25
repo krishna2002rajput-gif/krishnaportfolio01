@@ -152,8 +152,6 @@ const appliedSkills = [
     description:
       'Python and Google App Script workflows for invoicing, reconciliation, and customer onboarding to reduce repetitive manual processing.',
     tags: ['Python', 'Apps Script', 'Automation', 'MIS'],
-    github: 'https://github.com/krishna2002rajput-gif',
-    live: 'https://github.com/krishna2002rajput-gif',
   },
   {
     title: 'Procurement Analytics Dashboard',
@@ -162,8 +160,6 @@ const appliedSkills = [
     description:
       'Vendor performance, purchase order lifecycle, and spend analysis dashboards designed for weekly leadership visibility.',
     tags: ['SQL', 'Zoho Analytics', 'Procurement', 'Reporting'],
-    github: 'https://github.com/krishna2002rajput-gif',
-    live: 'https://github.com/krishna2002rajput-gif',
   },
   {
     title: 'Vendor Evaluation Framework',
@@ -172,8 +168,6 @@ const appliedSkills = [
     description:
       'A structured vendor onboarding, scoring, and compliance tracking framework that improved procurement transparency.',
     tags: ['Excel', 'Vendor Ops', 'Process Mapping', 'Compliance'],
-    github: 'https://github.com/krishna2002rajput-gif',
-    live: 'https://github.com/krishna2002rajput-gif',
   },
   {
     title: 'SQL Operations Analysis',
@@ -182,8 +176,6 @@ const appliedSkills = [
     description:
       'Operational data analysis to surface bottlenecks, process gaps, cost leakages, and opportunities for SOP improvements.',
     tags: ['SQL', 'Analysis', 'Operations', 'SOP'],
-    github: 'https://github.com/krishna2002rajput-gif',
-    live: 'https://github.com/krishna2002rajput-gif',
   },
 ];
 
@@ -201,10 +193,10 @@ const certifications = [
 ];
 
 const sectionMotion = {
-  initial: { opacity: 0, y: 28 },
+  initial: { opacity: 0, y: 18 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: '-80px' },
-  transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+  transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
 } as const;
 
 const authSteps = ['Authenticating...', 'Verifying Identity...', 'Loading Portfolio...', 'Preparing Dashboard...'];
@@ -238,7 +230,7 @@ const AuthPortal = ({
     <section className={`auth-portal ${authState !== 'locked' ? 'is-clearing' : ''}`} aria-label="Executive portfolio access">
       <div className="security-grid" />
       <div className="particle-field" aria-hidden="true">
-        {Array.from({ length: 18 }).map((_, index) => (
+        {Array.from({ length: 10 }).map((_, index) => (
           <span key={index} style={{ '--i': index } as CSSProperties} />
         ))}
       </div>
@@ -480,8 +472,8 @@ const App = () => {
     sessionStorage.setItem('portfolio-access-token', user.token || 'client-session');
     sessionStorage.setItem('portfolio-access-user', JSON.stringify(user));
 
-    window.setTimeout(() => setAuthState('revealing'), 2100);
-    window.setTimeout(() => setAuthState('unlocked'), 4700);
+    window.setTimeout(() => setAuthState('revealing'), 900);
+    window.setTimeout(() => setAuthState('unlocked'), 2800);
   };
 
   const requestOtp = async () => {
@@ -767,14 +759,6 @@ const App = () => {
                   {project.tags.map((tag) => (
                     <span key={tag}>{tag}</span>
                   ))}
-                </div>
-                <div className="project-actions">
-                  <a href={project.github} target="_blank" rel="noreferrer">
-                    <Github size={17} /> GitHub
-                  </a>
-                  <a href={project.live} target="_blank" rel="noreferrer">
-                    <ExternalLink size={17} /> Live Demo
-                  </a>
                 </div>
               </div>
             </motion.article>
