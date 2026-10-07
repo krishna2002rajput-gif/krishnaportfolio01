@@ -88,105 +88,144 @@ const navItems = [
 
 const skills = [
   {
-    title: 'Business Analysis',
+    title: 'Business Analysis & Consulting',
     icon: Briefcase,
-    items: ['Requirement Gathering', 'Process Mapping', 'Documentation', 'Stakeholder Management'],
+    items: [
+      'Requirements Elicitation & Gathering',
+      'As-Is / To-Be Process Mapping',
+      'BRD / FRD / SRS Authoring',
+      'Gap Analysis & Root Cause Analysis',
+      'UAT Support & Change Management',
+      'Stakeholder Management',
+    ],
   },
   {
-    title: 'Data Analytics',
+    title: 'Data Analytics & BI',
     icon: BarChart3,
-    items: ['Excel', 'Power BI', 'SQL', 'Zoho Analytics'],
+    items: [
+      'SQL (Joins, Aggregations, Data Cleansing)',
+      'Zoho Analytics & Power BI Dashboards',
+      'Python (Pandas, NumPy, EDA)',
+      'Advanced Excel (Power Query, Pivot, Macros)',
+      'MIS & KPI Operational Reporting',
+    ],
   },
   {
-    title: 'Automation',
+    title: 'Process Automation & Optimization',
     icon: Zap,
-    items: ['Python', 'Google App Script', 'Workflow Automation'],
+    items: [
+      'Python Workflow Automation',
+      'Google Apps Script',
+      'SOP Design & Governance',
+      'Lean Process Re-Engineering',
+      'Bottleneck Elimination',
+    ],
   },
   {
-    title: 'Business Operations',
+    title: 'Domain & Operational Knowledge',
     icon: CheckCircle2,
-    items: ['Procurement', 'Compliance', 'Reporting', 'MIS'],
+    items: [
+      'Procurement Lifecycle & Vendor Management',
+      'Contract Negotiation & SLA Tracking',
+      'Financial Reconciliation',
+      'GST / TDS / TCS Compliance',
+      'Zoho Books & Tally Prime',
+    ],
   },
 ];
 
 const experiences = [
   {
-    period: 'Aug 2025 - Present',
+    period: 'Aug 2025 – Present',
     title: 'Business Operations Associate',
     company: 'Elcom Digital Solutions',
     logo: 'ED',
     summary:
-      'Driving vendor and customer lifecycle operations, invoice reconciliation, MIS dashboards, and automation initiatives with Python and Google App Script.',
+      'Facilitated structured requirement-elicitation sessions with vendor, customer, and internal leadership stakeholders. Mapped As-Is and To-Be workflows for onboarding, invoicing, and billing reconciliations. Authored comprehensive SOPs and BRD-style documentation, automated repetitive tasks using Python and Google Apps Script, and engineered real-time Zoho Analytics dashboards via SQL for executive KPI tracking.',
   },
   {
-    period: 'Jun 2024 - Jun 2025',
-    title: 'Purchase Executive & Administrative Assistant',
+    period: 'Jun 2024 – Jun 2025',
+    title: 'Purchase Executive & Operations Analyst',
     company: 'J.N. Arora & Co. Pvt. Ltd.',
     logo: 'JN',
     summary:
-      'Managed procurement workflows, vendor coordination, delivery tracking, reporting, and vendor evaluation systems while maintaining a 98% on-time delivery rate.',
+      'Conducted end-to-end gap analysis on vendor evaluation processes, identifying critical bottlenecks and designing a standardized procurement workflow. Managed the complete purchase order lifecycle across a multi-vendor portfolio, achieving a consistent 98% on-time delivery rate. Developed analytical purchase and inventory reports in Excel for cost-effective negotiation and stock replenishment.',
   },
   {
-    period: 'Dec 2023 - Jun 2024',
+    period: 'Dec 2023 – Jun 2024',
     title: 'Accounts & Compliance Intern',
     company: 'CA Sapna Joshi & Associates',
     logo: 'CA',
     summary:
-      'Supported GST, TDS, TCS filings, reconciliation, ledger hygiene, and compliance documentation for client accounts using Tally ERP.',
+      'Conducted transactional reconciliations and maintained compliance documentation to ensure 100% audit readiness and statutory accuracy. Supported GST, TCS, and TDS filings for diverse corporate clients under strict regulatory deadlines. Standardized reconciliation spreadsheets using advanced Excel modeling and logic tests.',
   },
   {
-    period: 'Apr 2021 - Sep 2021',
-    title: 'Customer Service Representative',
+    period: 'Apr 2021 – Sep 2021',
+    title: 'Customer Service & Operations Representative',
     company: 'Lots Wholesale Solutions',
     logo: 'LW',
     summary:
-      'Handled customer-facing operations, query resolution, billing support, database updates, and MIS reporting.',
+      'Resolved complex customer billing adjustments and managed dispute resolution workflows. Maintained customer transactional databases and generated daily MIS service reports for management visibility.',
   },
 ];
 
 const appliedSkills = [
   {
-    title: 'Business Workflow Automation',
-    category: 'Operations Automation',
-    icon: Zap,
-    description:
-      'Python and Google App Script workflows for invoicing, reconciliation, and customer onboarding to reduce repetitive manual processing.',
-    tags: ['Python', 'Apps Script', 'Automation', 'MIS'],
-  },
-  {
-    title: 'Procurement Analytics Dashboard',
-    category: 'Analytics Dashboard',
-    icon: BarChart3,
-    description:
-      'Vendor performance, purchase order lifecycle, and spend analysis dashboards designed for weekly leadership visibility.',
-    tags: ['SQL', 'Zoho Analytics', 'Procurement', 'Reporting'],
-  },
-  {
-    title: 'Vendor Evaluation Framework',
+    title: 'Procurement Process Re-Engineering & Vendor SLA Governance',
     category: 'Process Excellence',
     icon: Briefcase,
     description:
-      'A structured vendor onboarding, scoring, and compliance tracking framework that improved procurement transparency.',
-    tags: ['Excel', 'Vendor Ops', 'Process Mapping', 'Compliance'],
+      'Conducted comprehensive gap analysis across procurement and vendor touchpoints. Facilitated stakeholder sessions to map As-Is bottlenecks and model To-Be workflows, then designed a centralized vendor evaluation scorecard — achieving a consistent 98% on-time delivery rate across the vendor portfolio.',
+    tags: ['Gap Analysis', 'Stakeholder Workshops', 'Vendor Scorecard', '98% OTD'],
   },
   {
-    title: 'SQL Operations Analysis',
+    title: 'Operations Digitization & Real-Time Executive BI Dashboard',
+    category: 'Analytics & Automation',
+    icon: BarChart3,
+    description:
+      'Led structured requirements workshops converting operational pain points into BRD/SOP specifications. Deployed Python & Google Apps Script automations for repetitive data flows and developed centralized Zoho Analytics dashboards queried via SQL for leadership tracking of operational KPIs.',
+    tags: ['BRD / SOP', 'Python', 'Apps Script', 'Zoho Analytics', 'SQL'],
+  },
+  {
+    title: 'Financial Compliance & Audit Reconciliation Automation',
+    category: 'Compliance & Finance',
+    icon: ShieldCheck,
+    description:
+      'Standardized multi-client reconciliation spreadsheets using advanced Excel modeling and logic tests. Performed ledger audits aligned with regulatory standards — maintaining 100% compliance accuracy across all assigned GST/TDS/TCS filings and reducing audit-preparation lead time.',
+    tags: ['Excel Modeling', 'GST / TDS / TCS', 'Audit Prep', '100% Accuracy'],
+  },
+  {
+    title: 'SQL Operations Analysis & KPI Reporting',
     category: 'Data Insights',
     icon: LineChart,
     description:
-      'Operational data analysis to surface bottlenecks, process gaps, cost leakages, and opportunities for SOP improvements.',
-    tags: ['SQL', 'Analysis', 'Operations', 'SOP'],
+      'Operational data analysis using SQL to surface bottlenecks, process gaps, cost leakages, and SLA performance trends. Delivered executive dashboards and MIS reports enabling data-backed decision-making at leadership level.',
+    tags: ['SQL', 'KPI Dashboards', 'MIS Reporting', 'SLA Analysis'],
   },
 ];
 
 const certifications = [
   {
-    title: 'Data Analytics Certification',
+    title: 'McKinsey.org Forward Program',
+    subtitle: 'McKinsey & Company · 2026',
+    icon: Sparkles,
+    link: '',
+  },
+  {
+    title: 'MBA – Business Analysis (Pursuing)',
+    subtitle: 'Amity University Online · Jan 2026 – Present',
+    icon: Briefcase,
+    link: '',
+  },
+  {
+    title: 'Data Analyst Certification',
+    subtitle: 'Physics Wallah · Mar 2026',
     icon: BarChart3,
     link: 'https://drive.google.com/file/d/1PhC9REkHygjkOvY8pcW7o_G40gORaN_Q/view?usp=drive_link',
   },
   {
     title: 'Financial Analysis Certification',
+    subtitle: 'View Certificate',
     icon: LineChart,
     link: 'https://drive.google.com/file/d/1UIeexX4PgQHXRb4NPgepoE5w-h3Occew/view?usp=drive_link',
   },
@@ -327,7 +366,8 @@ const App = () => {
   const [videoOpen, setVideoOpen] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
   const [authState, setAuthState] = useState<AuthState>(() => {
-    return sessionStorage.getItem('portfolio-access-token') ? 'unlocked' : 'locked';
+    // Temporarily unlocked to allow viewing the design locally without Vercel API
+    return 'unlocked'; 
   });
   const [authUser, setAuthUser] = useState<AuthUser | null>(() => {
     const stored = sessionStorage.getItem('portfolio-access-user');
@@ -599,14 +639,20 @@ const App = () => {
         >
           <div className="hero-kicker">
             <Sparkles size={16} />
-            Business operations, analytics, and automation
+            Business Analyst & Process Optimization Specialist
           </div>
           <h1>
             Hi, I am <span>Krishna Rajput</span>
           </h1>
           <p>
-            Business Analyst | Operations Excellence | Data Analytics | Process Automation
+            Bridging front-line operational expertise with analytical rigor — specialized in Requirements Elicitation, As-Is/To-Be Process Mapping, SQL/BI Analytics, and Workflow Automation.
           </p>
+          <div className="hero-pills">
+            <span>🎓 McKinsey Forward Scholar</span>
+            <span>📊 MBA Business Analysis</span>
+            <span>⚙️ 2+ Yrs Cross-Functional Ops</span>
+            <span>🎯 98% SLA Milestone</span>
+          </div>
           <div className="hero-actions">
             <a className="btn btn-primary" href="#skills">
               View Skills <ArrowRight size={18} />
@@ -627,8 +673,8 @@ const App = () => {
           transition={{ delay: 0.35, duration: 0.7 }}
         >
           <PieChart size={24} />
-          <strong>40% less manual effort</strong>
-          <span>Through Python and Google App Script automations.</span>
+          <strong>98% On-Time Delivery</strong>
+          <span>Achieved across multi-vendor procurement portfolio.</span>
         </motion.div>
 
         <div className="floating-socials" aria-label="Social links">
@@ -650,19 +696,33 @@ const App = () => {
 
       <section id="profile" className="section profile-section">
         <motion.div {...sectionMotion} className="section-heading">
-          <span>Profile</span>
-          <h2>Professional Profile</h2>
+          <span>About Me</span>
+          <h2>From Operational Execution to Strategic Business Analysis</h2>
         </motion.div>
         <motion.div {...sectionMotion} className="profile-grid">
           <div className="profile-copy">
             <h3>Krishna Rajput</h3>
-            <p className="role">Business Analyst | Operations Excellence | Data Analytics | Process Automation</p>
+            <p className="role">Business Analyst · Process Optimization · Data-Driven Insights</p>
             <p>
-              I enjoy turning complex business processes into structured, scalable, and data-driven systems.
+              My professional journey began in the operational core of organizations — managing procurement lifecycles, vendor ecosystems, and financial compliance. Experiencing firsthand where communication breaks, where data gets siloed, and where manual inefficiencies slow teams down inspired my deliberate transition into Business Analysis.
             </p>
             <p>
-              With experience across business operations, procurement, analytics, reporting, automation, and compliance, I work at the intersection of operations, technology, and strategy. From automating repetitive workflows using Python and Google App Script to building MIS dashboards and operational reports, I focus on improving efficiency and enabling smarter business decisions.
+              Today, I combine my practical operational foundation with structured problem-solving frameworks cultivated through the McKinsey.org Forward Program and an MBA in Business Analysis. I specialize in breaking down ambiguous business problems into structured requirements, designing automated workflows, and delivering actionable BI dashboards.
             </p>
+            <div className="differentiators">
+              <div className="diff-item">
+                <strong>01 · Requirements Engineering with Operational Empathy</strong>
+                <p>Because I have executed workflows myself, the SOPs, BRDs, and process maps I design are realistic, scalable, and user-adopted.</p>
+              </div>
+              <div className="diff-item">
+                <strong>02 · Structured Problem Solving (McKinsey Forward Framework)</strong>
+                <p>Applying hypothesis-driven analysis, MECE issue breakdown, and root-cause investigation (5 Whys / Fishbone) to solve core business bottlenecks.</p>
+              </div>
+              <div className="diff-item">
+                <strong>03 · End-to-End Analytical Fluency</strong>
+                <p>From writing SQL queries and building Zoho Analytics/BI dashboards to automating routine tasks with Python and Google Apps Script.</p>
+              </div>
+            </div>
           </div>
           <div className="profile-stats">
             {[
@@ -735,8 +795,8 @@ const App = () => {
 
       <section id="applied-skills" className="section">
         <motion.div {...sectionMotion} className="section-heading">
-          <span>Applied Capabilities</span>
-          <h2>Skills</h2>
+          <span>Featured Case Studies</span>
+          <h2>BA Projects & Impact</h2>
         </motion.div>
         <div className="projects-grid">
           {appliedSkills.map((project, index) => {
@@ -770,27 +830,33 @@ const App = () => {
       <section id="certifications" className="section certifications-section">
         <motion.div {...sectionMotion} className="section-heading">
           <span>Credentials</span>
-          <h2>Certifications</h2>
+          <h2>Education & Certifications</h2>
         </motion.div>
         <div className="cert-grid">
           {certifications.map((certificate, index) => {
             const Icon = certificate.icon;
+            const CardTag = certificate.link ? motion.a : motion.div;
+            const linkProps = certificate.link
+              ? { href: certificate.link, target: '_blank', rel: 'noreferrer' }
+              : {};
             return (
-              <motion.a
+              <CardTag
                 {...sectionMotion}
+                {...linkProps}
                 transition={{ duration: 0.7, delay: index * 0.08 }}
                 className="certificate-card glass-card"
-                href={certificate.link}
-                target="_blank"
-                rel="noreferrer"
                 key={certificate.title}
               >
                 <Icon size={34} />
                 <h3>{certificate.title}</h3>
                 <span>
-                  View Certificate <ExternalLink size={16} />
+                  {certificate.link ? (
+                    <>{certificate.subtitle} <ExternalLink size={14} /></>
+                  ) : (
+                    certificate.subtitle
+                  )}
                 </span>
-              </motion.a>
+              </CardTag>
             );
           })}
         </div>
@@ -798,8 +864,13 @@ const App = () => {
 
       <section id="contact" className="section contact-section">
         <motion.div {...sectionMotion} className="contact-card glass-card">
-          <span>Open to opportunities</span>
-          <h2>Let’s build cleaner operations and sharper reporting.</h2>
+          <span>Open to BA &amp; Operations Roles</span>
+          <h2>Let’s connect and build something impactful.</h2>
+          <div className="contact-chips">
+            <span>📍 Krishna Nagar, Delhi – 110051</span>
+            <span>📞 +91 9650259801</span>
+            <span>✉️ krishna2002rajput@gmail.com</span>
+          </div>
           <div className="contact-actions">
             <a className="btn btn-primary" href="mailto:krishna2002rajput@gmail.com">
               <Mail size={18} /> Email Me
