@@ -552,13 +552,12 @@ const App = () => {
     return payload.url as string;
   };
 
-  const openResume = async () => {
-    try {
-      const url = await getProtectedAsset('resume');
-      window.open(url, '_blank', 'noopener,noreferrer');
-    } catch (error) {
-      setAuthError(error instanceof Error ? error.message : 'Unable to open protected resume.');
-    }
+  const openResume = () => {
+    window.open(
+      'https://drive.google.com/file/d/1LPOQUiTQ_91vAfQDCktZQbw2aApzo2qM/view?usp=drive_link',
+      '_blank',
+      'noopener,noreferrer'
+    );
   };
 
   const openIntroVideo = async () => {
