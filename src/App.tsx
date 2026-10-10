@@ -269,18 +269,28 @@ const BusinessComparison = () => {
     let width = 0;
     let height = 0;
     let frame = 0;
+    let timer = 0;
+    let isVisible = false;
     let pixelRatio = 1;
     const resize = () => {
       const bounds = canvas.getBoundingClientRect();
-      pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      const isSmallScreen = window.matchMedia('(max-width: 760px)').matches;
+      pixelRatio = Math.min(window.devicePixelRatio || 1, isSmallScreen ? 1.25 : 1.5);
       width = bounds.width;
       height = bounds.height;
       canvas.width = Math.round(width * pixelRatio);
       canvas.height = Math.round(height * pixelRatio);
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      if (isVisible && !document.hidden) {
+        window.cancelAnimationFrame(frame);
+        window.clearTimeout(timer);
+        timer = 0;
+        frame = window.requestAnimationFrame(draw);
+      }
     };
 
     const draw = (time: number) => {
+      frame = 0;
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
       context.clearRect(0, 0, width, height);
       const divider = width * splitRef.current;
@@ -389,16 +399,47 @@ const BusinessComparison = () => {
       context.font = '700 12px system-ui, sans-serif';
       context.textAlign = 'center';
       context.fillText('↔', divider, height * 0.88 + 4);
-      frame = window.requestAnimationFrame(draw);
+      if (isVisible && !document.hidden) {
+        timer = window.setTimeout(() => {
+          timer = 0;
+          frame = window.requestAnimationFrame(draw);
+        }, 1000 / 30);
+      }
+    };
+
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+      if (isVisible && !document.hidden && !frame && !timer) {
+        frame = window.requestAnimationFrame(draw);
+      } else if (!isVisible) {
+        window.cancelAnimationFrame(frame);
+        window.clearTimeout(timer);
+        frame = 0;
+        timer = 0;
+      }
+    }, { rootMargin: '100px' });
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        window.cancelAnimationFrame(frame);
+        window.clearTimeout(timer);
+        frame = 0;
+        timer = 0;
+      } else if (isVisible && !frame && !timer) {
+        frame = window.requestAnimationFrame(draw);
+      }
     };
 
     resize();
     const observer = new ResizeObserver(resize);
     observer.observe(canvas);
-    frame = window.requestAnimationFrame(draw);
+    visibilityObserver.observe(canvas);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
       window.cancelAnimationFrame(frame);
+      window.clearTimeout(timer);
       observer.disconnect();
+      visibilityObserver.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
@@ -842,7 +883,7 @@ const App = () => {
 
       <section id="hero" className="hero-section" ref={heroRef}>
         <div className="hero-frame">
-        <motion.img className="hero-cover" src={asset('hero-intro.png')} alt="Illustrated portrait of Krishna Rajput with business analytics dashboards" fetchPriority="high" style={{ scale: heroImageScale, opacity: heroImageOpacity }} />
+        <motion.img className="hero-cover" src={asset('hero-intro.webp')} alt="Illustrated portrait of Krishna Rajput with business analytics dashboards" fetchPriority="high" decoding="async" style={{ scale: heroImageScale, opacity: heroImageOpacity }} />
         <div className="hero-overlay" />
         <div className="hero-motion hero-motion-one" />
         <div className="hero-motion hero-motion-two" />
@@ -921,7 +962,7 @@ const App = () => {
             <p>{portraitFrames[portraitFrame].note}</p>
           </div>
           <div className="portrait-window">
-            <img src={asset('intro-2.png')} alt="Black-and-white portrait of Krishna Rajput" style={{ objectPosition: portraitFrames[portraitFrame].position }} />
+            <img src={asset('intro-2.webp')} alt="Black-and-white portrait of Krishna Rajput" loading="lazy" decoding="async" style={{ objectPosition: portraitFrames[portraitFrame].position }} />
             <div className="portrait-ink" aria-hidden="true" />
             <span className="portrait-index">KR—26</span>
           </div>
@@ -946,7 +987,7 @@ const App = () => {
         </div>
         <div className="insight-layout">
           <div className="insight-image-wrap">
-            <img src={asset('intro.png')} alt="Portrait of Krishna Rajput" loading="lazy" />
+            <img src={asset('intro.webp')} alt="Portrait of Krishna Rajput" loading="lazy" decoding="async" />
             <span>CONNECTED THINKING / 01</span>
           </div>
           <div className="insight-story">
