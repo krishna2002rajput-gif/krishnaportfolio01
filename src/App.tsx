@@ -1,5 +1,5 @@
-import { type CSSProperties, useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { type CSSProperties, useEffect, useRef, useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import {
   ArrowRight,
   BarChart3,
@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   ChevronDown,
   ExternalLink,
-  Github,
   Linkedin,
   LineChart,
   LockKeyhole,
@@ -78,6 +77,8 @@ const logClientEvent = (event: string, status: string, details = '') => {
 };
 
 const navItems = [
+  { label: 'Showcase', href: '#showcase' },
+  { label: 'Business Insight', href: '#business-insight' },
   { label: 'Profile', href: '#profile' },
   { label: 'Skills', href: '#skills' },
   { label: 'Experience', href: '#experience' },
@@ -231,6 +232,214 @@ const certifications = [
   },
 ];
 
+const portraitFrames = [
+  { label: 'The Operator', note: 'Built from the ground up', position: '50% 42%', tint: 'ink' },
+  { label: 'The Analyst', note: 'Finding the signal in the noise', position: '50% 30%', tint: 'ember' },
+  { label: 'The Strategist', note: 'Turning complexity into clarity', position: '48% 55%', tint: 'blue' },
+  { label: 'The Collaborator', note: 'Progress happens together', position: '54% 40%', tint: 'violet' },
+  { label: 'The Next Chapter', note: 'Ready for what comes next', position: '50% 48%', tint: 'ink' },
+];
+
+const businessFunctions = [
+  { name: 'CRM', color: '#34d399', role: 'The growth', connected: 'A customer win becomes a shared business signal.', siloed: 'Won deals stall or get lost, so growth leaks.', differential: 'The customer win carries into delivery.' },
+  { name: 'Operations', color: '#60a5fa', role: 'The movement', connected: 'A closed deal activates provisioning and fulfillment.', siloed: 'Missed handoffs delay delivery and frustrate customers.', differential: 'The handoff becomes an active workflow.' },
+  { name: 'Finance', color: '#fbbf24', role: 'The lifeblood', connected: 'Revenue meets the ledger; spending connects to value.', siloed: 'Revenue and ledger drift apart, risking leakage and audits.', differential: 'Revenue and costs share operational context.' },
+  { name: 'Engagement', color: '#f472b6', role: 'The heartbeat', connected: 'Workload friction and engagement become visible together.', siloed: 'Hidden workload friction can turn into burnout and attrition.', differential: 'Team pressure is visible before it compounds.' },
+  { name: 'People', color: '#a78bfa', role: 'The capacity to grow', connected: 'Workforce changes sync access, payroll, and security permissions.', siloed: 'Ex-staff may keep access and payroll errors go unnoticed.', differential: 'People, access, and payroll changes stay in sync.' },
+];
+
+const BusinessComparison = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const splitRef = useRef(0.5);
+  const [split, setSplit] = useState(0.5);
+  const [activeFunction, setActiveFunction] = useState(0);
+
+  const moveDivider = (clientX: number, canvas: HTMLCanvasElement) => {
+    const bounds = canvas.getBoundingClientRect();
+    const next = Math.max(0.06, Math.min(0.94, (clientX - bounds.left) / bounds.width));
+    splitRef.current = next;
+    setSplit(next);
+  };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext('2d');
+    if (!canvas || !context) return;
+
+    let width = 0;
+    let height = 0;
+    let frame = 0;
+    let pixelRatio = 1;
+    const resize = () => {
+      const bounds = canvas.getBoundingClientRect();
+      pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      width = bounds.width;
+      height = bounds.height;
+      canvas.width = Math.round(width * pixelRatio);
+      canvas.height = Math.round(height * pixelRatio);
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    };
+
+    const draw = (time: number) => {
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      context.clearRect(0, 0, width, height);
+      const divider = width * splitRef.current;
+      const points = businessFunctions.map((_, index) => ({ x: width * (0.1 + index * 0.2), y: height * 0.59 }));
+
+      const drawWorld = (connected: boolean, left: number, right: number) => {
+        context.save();
+        context.beginPath();
+        context.rect(left, 0, right - left, height);
+        context.clip();
+        const background = context.createLinearGradient(left, 0, right, height);
+        if (connected) {
+          background.addColorStop(0, '#0b1830');
+          background.addColorStop(1, '#0a292d');
+        } else {
+          background.addColorStop(0, '#151523');
+          background.addColorStop(1, '#25151f');
+        }
+        context.fillStyle = background;
+        context.fillRect(left, 0, right - left, height);
+
+        context.fillStyle = connected ? '#67e8d1' : '#ff8d9d';
+        context.font = '800 10px system-ui, sans-serif';
+        context.textAlign = 'left';
+        context.fillText(connected ? 'WITH BUSINESS OS' : 'WITHOUT OS', left + 18, 24);
+        context.fillStyle = '#a8b3c6';
+        context.font = '11px system-ui, sans-serif';
+        context.fillText(connected ? 'One signal, shared across teams' : 'Good teams, broken handoffs', left + 18, 42);
+
+        for (let index = 0; index < points.length - 1; index += 1) {
+          const from = points[index];
+          const to = points[index + 1];
+          context.save();
+          context.lineWidth = connected ? 2.5 : 1.5;
+          context.strokeStyle = connected ? '#2dd4bf' : '#657089';
+          context.shadowColor = connected ? '#2dd4bf' : 'transparent';
+          context.shadowBlur = connected ? 10 : 0;
+          context.setLineDash(connected ? [] : [5, 6]);
+          context.beginPath();
+          if (connected) {
+            context.moveTo(from.x, from.y);
+            context.lineTo(to.x, to.y);
+          } else {
+            const gapX = (from.x + to.x) / 2;
+            context.moveTo(from.x, from.y);
+            context.lineTo(gapX - 11, from.y);
+            context.moveTo(gapX + 11, to.y);
+            context.lineTo(to.x, to.y);
+          }
+          context.stroke();
+          context.restore();
+
+          const progress = ((time / (connected ? 1550 : 3100) + index * 0.19) % 1 + 1) % 1;
+          let packetX = from.x + (to.x - from.x) * progress;
+          if (!connected && progress > 0.45 && progress < 0.86) packetX = (from.x + to.x) / 2 - 13;
+          context.beginPath();
+          context.arc(packetX, from.y, connected ? 4.5 : 3.5, 0, Math.PI * 2);
+          context.fillStyle = connected ? '#ffffff' : '#ffd99a';
+          context.shadowColor = connected ? '#67e8d1' : '#ff8d9d';
+          context.shadowBlur = 13;
+          context.fill();
+          context.shadowBlur = 0;
+
+          if (!connected) {
+            const gapX = (from.x + to.x) / 2;
+            context.strokeStyle = '#ff8d9d';
+            context.lineWidth = 1.5;
+            context.beginPath();
+            context.moveTo(gapX - 4, from.y - 5);
+            context.lineTo(gapX + 4, from.y + 3);
+            context.moveTo(gapX + 4, from.y - 5);
+            context.lineTo(gapX - 4, from.y + 3);
+            context.stroke();
+          }
+        }
+
+        points.forEach((point, index) => {
+          const item = businessFunctions[index];
+          context.beginPath();
+          context.arc(point.x, point.y, 22, 0, Math.PI * 2);
+          context.fillStyle = connected ? '#10223d' : '#171a2a';
+          context.fill();
+          context.lineWidth = connected ? 2 : 1.5;
+          context.strokeStyle = connected ? item.color : '#59627d';
+          context.stroke();
+          context.fillStyle = connected ? item.color : '#a2abc0';
+          context.font = '700 13px Georgia, serif';
+          context.textAlign = 'center';
+          context.fillText(item.name[0], point.x, point.y + 5);
+          context.fillStyle = '#e7ecf5';
+          context.font = '600 9px system-ui, sans-serif';
+          context.fillText(item.name, point.x, point.y + 39);
+        });
+        context.restore();
+      };
+
+      drawWorld(false, 0, divider);
+      drawWorld(true, divider, width);
+      context.fillStyle = '#ffffff';
+      context.fillRect(divider - 1, 0, 2, height);
+      context.beginPath();
+      context.arc(divider, height * 0.88, 17, 0, Math.PI * 2);
+      context.fillStyle = '#ffffff';
+      context.fill();
+      context.fillStyle = '#101827';
+      context.font = '700 12px system-ui, sans-serif';
+      context.textAlign = 'center';
+      context.fillText('↔', divider, height * 0.88 + 4);
+      frame = window.requestAnimationFrame(draw);
+    };
+
+    resize();
+    const observer = new ResizeObserver(resize);
+    observer.observe(canvas);
+    frame = window.requestAnimationFrame(draw);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, []);
+
+  const active = businessFunctions[activeFunction];
+  return (
+    <div className="business-simulation">
+      <div className="business-canvas-shell">
+        <canvas
+          ref={canvasRef}
+          aria-label="Animated comparison: disconnected teams on the left and a connected business operating system on the right. Drag the divider or use the slider below."
+          onPointerDown={(event) => {
+            event.currentTarget.setPointerCapture(event.pointerId);
+            moveDivider(event.clientX, event.currentTarget);
+          }}
+          onPointerMove={(event) => {
+            if (event.buttons === 1) moveDivider(event.clientX, event.currentTarget);
+          }}
+        />
+      </div>
+      <label className="business-scrubber-label" htmlFor="business-scrubber">Drag the divider to compare the two systems</label>
+      <input id="business-scrubber" className="business-scrubber" type="range" min="6" max="94" value={Math.round(split * 100)} onChange={(event) => {
+        const next = Number(event.target.value) / 100;
+        splitRef.current = next;
+        setSplit(next);
+      }} aria-label="Compare disconnected and connected business systems" />
+      <div className="business-department-tabs" role="tablist" aria-label="Business functions">
+        {businessFunctions.map((item, index) => (
+          <button key={item.name} type="button" role="tab" aria-selected={activeFunction === index} className={activeFunction === index ? 'is-active' : ''} onClick={() => setActiveFunction(index)}>
+            {item.name}
+          </button>
+        ))}
+      </div>
+      <div className="business-function-detail" role="tabpanel">
+        <span style={{ color: active.color }}>{active.role}</span>
+        <p><b>{active.name}:</b> {active.connected}</p>
+      </div>
+      <p className="business-simulation-note">Illustrative simulation, not real company data.</p>
+    </div>
+  );
+};
+
 const sectionMotion = {
   initial: { opacity: 0, y: 18 },
   whileInView: { opacity: 1, y: 0 },
@@ -363,6 +572,14 @@ const SecurityShutter = ({ active }: { active: boolean }) => (
 
 const App = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [portraitFrame, setPortraitFrame] = useState(0);
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: heroScrollProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end end'],
+  });
+  const heroImageScale = useTransform(heroScrollProgress, [0, 1], [1, 1.48]);
+  const heroImageOpacity = useTransform(heroScrollProgress, [0, 0.72, 1], [1, 0.72, 0]);
   const [videoOpen, setVideoOpen] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
   const [authState, setAuthState] = useState<AuthState>(() => {
@@ -595,7 +812,6 @@ const App = () => {
 
       <div className={`portfolio-content ${authState === 'locked' || authState === 'verifying' ? 'is-locked' : ''} ${inspectionDetected ? 'inspection-warning' : ''}`}>
       {securityNotice && <div className="security-toast">{securityNotice}</div>}
-      <div className="portfolio-watermark" aria-hidden="true">KRISHNA RAJPUT</div>
       <nav className="nav-shell" aria-label="Primary navigation">
         <a href="#hero" className="brand-mark" aria-label="Krishna Rajput home">
           KR
@@ -624,8 +840,9 @@ const App = () => {
         )}
       </nav>
 
-      <section id="hero" className="hero-section">
-        <img className="hero-cover" src={asset('KRISHNA.png')} alt="Krishna Rajput" fetchPriority="high" />
+      <section id="hero" className="hero-section" ref={heroRef}>
+        <div className="hero-frame">
+        <motion.img className="hero-cover" src={asset('hero-intro.png')} alt="Illustrated portrait of Krishna Rajput with business analytics dashboards" fetchPriority="high" style={{ scale: heroImageScale, opacity: heroImageOpacity }} />
         <div className="hero-overlay" />
         <div className="hero-motion hero-motion-one" />
         <div className="hero-motion hero-motion-two" />
@@ -638,13 +855,13 @@ const App = () => {
         >
           <div className="hero-kicker">
             <Sparkles size={16} />
-            Business Analyst & Process Optimization Specialist
+            Business Analyst &amp; Operations Analyst
           </div>
           <h1>
             Hi, I am <span>Krishna Rajput</span>
           </h1>
           <p>
-            Bridging front-line operational expertise with analytical rigor — specialized in Requirements Elicitation, As-Is/To-Be Process Mapping, SQL/BI Analytics, and Workflow Automation.
+            Business Analyst &amp; Operations Analyst — turning complex workflows into structured, data-driven solutions through Requirements Elicitation, Process Mapping, SQL/BI Analytics, and Automation.
           </p>
           <div className="hero-pills">
             <span>🎓 McKinsey Forward Scholar</span>
@@ -683,14 +900,77 @@ const App = () => {
           <a href="https://www.linkedin.com/in/krishna-rajput-b30a0025b/" target="_blank" rel="noreferrer" aria-label="LinkedIn profile">
             <Linkedin size={20} />
           </a>
-          <a href="https://github.com/krishna2002rajput-gif" target="_blank" rel="noreferrer" aria-label="GitHub profile">
-            <Github size={20} />
-          </a>
         </div>
 
-        <a className="scroll-indicator" href="#profile" aria-label="Scroll to profile">
+        <a className="scroll-indicator" href="#showcase" aria-label="Scroll to portrait showcase">
           <ChevronDown size={22} />
         </a>
+        </div>
+      </section>
+
+      <section id="showcase" className="section art-showcase" aria-label="Portrait timeline">
+        <div className="showcase-heading">
+          <span>One journey, many frames</span>
+          <h2>A portrait in progress<span>.</span></h2>
+          <p>Drag the timeline to move through the story.</p>
+        </div>
+        <div className={`art-stage art-stage-${portraitFrames[portraitFrame].tint}`}>
+          <div className="art-stage-copy">
+            <span className="frame-count">FRAME 0{portraitFrame + 1} / 0{portraitFrames.length}</span>
+            <h3>{portraitFrames[portraitFrame].label}</h3>
+            <p>{portraitFrames[portraitFrame].note}</p>
+          </div>
+          <div className="portrait-window">
+            <img src={asset('intro-2.png')} alt="Black-and-white portrait of Krishna Rajput" style={{ objectPosition: portraitFrames[portraitFrame].position }} />
+            <div className="portrait-ink" aria-hidden="true" />
+            <span className="portrait-index">KR—26</span>
+          </div>
+          <span className="stage-mark stage-mark-one" aria-hidden="true">✳</span>
+          <span className="stage-mark stage-mark-two" aria-hidden="true">↗</span>
+          <span className="stage-caption">A continuous study in work, curiosity &amp; craft</span>
+        </div>
+        <div className="frame-rail">
+          <div className="frame-labels" aria-hidden="true">
+            {portraitFrames.map((frame, index) => <button key={frame.label} className={portraitFrame === index ? 'is-active' : ''} onClick={() => setPortraitFrame(index)} type="button"><span>0{index + 1}</span>{frame.label}</button>)}
+          </div>
+          <input aria-label="Scrub through portrait timeline" type="range" min="0" max={portraitFrames.length - 1} step="1" value={portraitFrame} onChange={(event) => setPortraitFrame(Number(event.target.value))} />
+          <div className="rail-foot"><span>DRAG TO SCRUB</span><span>01—05</span></div>
+        </div>
+      </section>
+
+      <section id="business-insight" className="section business-insight">
+        <div className="insight-heading">
+          <span>Business insight · A story for every business</span>
+          <h2>One customer win.<br /><em>Five teams in motion.</em></h2>
+          <p className="insight-user-story"><b>Customer story</b> “When I sign a contract, I expect every team to know what happens next—without repeating information or waiting on internal handoffs.”</p>
+        </div>
+        <div className="insight-layout">
+          <div className="insight-image-wrap">
+            <img src={asset('intro.png')} alt="Portrait of Krishna Rajput" loading="lazy" />
+            <span>CONNECTED THINKING / 01</span>
+          </div>
+          <div className="insight-story">
+            <BusinessComparison />
+          </div>
+        </div>
+        <div className="insight-differential" role="table" aria-label="Business OS differential by function">
+          <h3>Business OS differential</h3>
+          <div className="differential-header" role="row">
+            <span role="columnheader">Function</span>
+            <span role="columnheader">Without OS</span>
+            <span role="columnheader">With Business OS</span>
+            <span role="columnheader">The difference</span>
+          </div>
+          {businessFunctions.map((item) => (
+            <div className="differential-row" role="row" key={item.name}>
+              <span className="differential-function" role="cell" data-label="Function" style={{ color: item.color }}>{item.name}</span>
+              <span role="cell" data-label="Without OS">{item.siloed}</span>
+              <span role="cell" data-label="With Business OS">{item.connected}</span>
+              <span className="differential-result" role="cell" data-label="The difference">{item.differential}</span>
+            </div>
+          ))}
+        </div>
+        <p className="insight-source-note">Illustrative business scenario based on the Business OS presentation; outcomes depend on each organization’s processes and systems.</p>
       </section>
 
       <section id="profile" className="section profile-section">
@@ -701,7 +981,7 @@ const App = () => {
         <motion.div {...sectionMotion} className="profile-grid">
           <div className="profile-copy">
             <h3>Krishna Rajput</h3>
-            <p className="role">Business Analyst · Process Optimization · Data-Driven Insights</p>
+            <p className="role">Business Analyst &amp; Operations Analyst · Process Optimization · Data-Driven Insights</p>
             <p>
               My professional journey began in the operational core of organizations — managing procurement lifecycles, vendor ecosystems, and financial compliance. Experiencing firsthand where communication breaks, where data gets siloed, and where manual inefficiencies slow teams down inspired my deliberate transition into Business Analysis.
             </p>
@@ -863,8 +1143,11 @@ const App = () => {
 
       <section id="contact" className="section contact-section">
         <motion.div {...sectionMotion} className="contact-card glass-card">
-          <span>Open to BA &amp; Operations Roles</span>
-          <h2>Let’s connect and build something impactful.</h2>
+          <span>Open to Business Analyst &amp; Operations Analyst Roles</span>
+          <h2>Let's collaborate &mdash; ready to drive your next BA or Ops initiative.</h2>
+          <p className="contact-value-prop">
+            Available for full-time BA / Operations Analyst roles. Bringing 2+ years of hands-on experience in process re-engineering, stakeholder requirements, and data-driven reporting.
+          </p>
           <div className="contact-chips">
             <span>📍 Krishna Nagar, Delhi – 110051</span>
             <span>📞 +91 9650259801</span>
@@ -878,10 +1161,10 @@ const App = () => {
               <Linkedin size={18} /> LinkedIn
             </a>
             <button className="btn btn-secondary" type="button" onClick={openResume}>
-              <ExternalLink size={18} /> Resume
+              <ExternalLink size={18} /> View Resume
             </button>
             <button className="btn btn-secondary" type="button" onClick={openIntroVideo}>
-              <Play size={18} fill="currentColor" /> Introduction Video
+              <Play size={18} fill="currentColor" /> Intro Video
             </button>
           </div>
         </motion.div>
