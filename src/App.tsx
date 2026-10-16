@@ -812,7 +812,7 @@ const App = () => {
 
   const openResume = () => {
     window.open(
-      'https://drive.google.com/file/d/1LPOQUiTQ_91vAfQDCktZQbw2aApzo2qM/view?usp=drive_link',
+      'https://drive.google.com/file/d/11vTA6LSdE3FpBbnpLg46vv6LZooSCKP0/view?usp=drive_link',
       '_blank',
       'noopener,noreferrer'
     );
